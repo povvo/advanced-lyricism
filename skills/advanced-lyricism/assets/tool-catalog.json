@@ -1,0 +1,1046 @@
+{
+  "schema": "advanced-lyricism.tool-catalog.v1",
+  "principle": "Call every tool that can assist the current task; representations feed detectors and generators; evaluation returns dimension-specific diagnostics and comparisons for audition.",
+  "tools": [
+    {
+      "id": "midi_to_json",
+      "class": "representation",
+      "script": "scripts/midi_to_json.py",
+      "when": "MIDI or symbolic beat data is supplied",
+      "input": [
+        ".mid",
+        ".midi"
+      ],
+      "output": "advanced-lyricism.music-event-ir.v1",
+      "deterministic": true,
+      "primary_domain": "musical-representation",
+      "primary_reference": "references/musical-representation.md",
+      "primary_template": "assets/templates/musical-representation.md",
+      "runtime": {
+        "required_capabilities": [
+          "midi_parse"
+        ],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "MIDI event/timing representation when parser is available"
+        ],
+        "fallback": "If blocked, use supplied beat metadata or existing timing."
+      },
+      "cli": {
+        "first": "python scripts/midi_to_json.py <beat.mid> -o <music.json>",
+        "full": "python scripts/midi_to_json.py <beat.mid> --include-messages -o <music-full.json>"
+      }
+    },
+    {
+      "id": "audio_to_json",
+      "class": "representation",
+      "script": "scripts/audio_to_json.py",
+      "when": "Audio is supplied and beat/onset/energy analysis would change writing",
+      "input": [
+        "audio file"
+      ],
+      "output": "advanced-lyricism.audio-event-ir.v1",
+      "deterministic": true,
+      "primary_domain": "musical-representation",
+      "primary_reference": "references/musical-representation.md",
+      "primary_template": "assets/templates/musical-representation.md",
+      "runtime": {
+        "required_capabilities": [
+          "audio_analysis"
+        ],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "estimated tempo/beats/onsets/energy only when audio backend is available"
+        ],
+        "fallback": "If blocked, preserve supplied BPM and section timing."
+      },
+      "cli": {
+        "first": "python scripts/audio_to_json.py <beat.wav> -o <audio.json>"
+      }
+    },
+    {
+      "id": "phoneme_map",
+      "class": "representation",
+      "script": "scripts/phoneme_map.py",
+      "when": "Pronunciation, stress, syllable structure or rhyme uncertainty matters",
+      "input": [
+        "text"
+      ],
+      "output": "advanced-lyricism.phoneme-map.v2",
+      "deterministic": true,
+      "primary_domain": "lexical-engineering",
+      "primary_reference": "references/lexical-engineering.md",
+      "primary_template": "assets/templates/lexical-engineering.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [
+          "pronunciation_dictionary"
+        ],
+        "safe_claims": [
+          "tokenization and heuristic syllable counts always; phonemes/stress only for covered tokens"
+        ],
+        "partial_forbidden_claims": [
+          "absence of rhyme",
+          "stress-grid fit",
+          "phonological similarity for uncovered words"
+        ],
+        "fallback": "Use heuristic syllable counts plus explicit pronunciation uncertainty."
+      },
+      "agent_io": {
+        "summary_flag": "--summary",
+        "prefer_summary_for_first_inspection": true,
+        "prefer_file_output_for_full": true,
+        "full_output_pattern": "python scripts/phoneme_map.py <args> -o <scratch.json>",
+        "summary_pattern": "python scripts/phoneme_map.py <args> --summary"
+      },
+      "cli": {
+        "first": "python scripts/phoneme_map.py -i <lyrics.txt> --summary",
+        "full": "python scripts/phoneme_map.py -i <lyrics.txt> -o <phonemes.json>",
+        "accent_override": "python scripts/phoneme_map.py -i <lyrics.txt> --pronunciation-json <arpabet.json> --summary"
+      }
+    },
+    {
+      "id": "delivery_notation",
+      "class": "representation",
+      "script": "scripts/delivery_notation.py",
+      "when": "Bars contain breath/emphasis/ad-lib/pitch/tone notation",
+      "input": [
+        "text"
+      ],
+      "output": "advanced-lyricism.delivery-ir.v1",
+      "deterministic": true,
+      "primary_domain": "performance-delivery",
+      "primary_reference": "references/performance-delivery.md",
+      "primary_template": "assets/templates/performance-delivery.md",
+      "secondary_domains": [
+        "revision-evaluation",
+        "voice-register"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "parse explicit delivery notation already present in text"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/delivery_notation.py -i <annotated-lyrics.txt> -o <delivery.json>"
+      }
+    },
+    {
+      "id": "music_structure",
+      "class": "detection",
+      "script": "scripts/music_structure.py",
+      "when": "Need bar density, boundary, repetition or drum-anchor cues from music IR",
+      "input": [
+        "music-event IR",
+        "audio-event IR"
+      ],
+      "output": "advanced-lyricism.music-structure.v1",
+      "deterministic": true,
+      "primary_domain": "musical-representation",
+      "primary_reference": "references/musical-representation.md",
+      "primary_template": "assets/templates/musical-representation.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "derive structure cues only from valid music-event/audio-event IR"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/music_structure.py <music-or-audio.json> -o <structure.json>"
+      }
+    },
+    {
+      "id": "beat_affordance",
+      "class": "detection",
+      "script": "scripts/beat_affordance.py",
+      "when": "Need candidate lyric stress/negative-space interactions with analysed music",
+      "input": [
+        "text",
+        "music-structure IR"
+      ],
+      "output": "advanced-lyricism.beat-affordance.v1",
+      "deterministic": true,
+      "primary_domain": "musical-representation",
+      "primary_reference": "references/musical-representation.md",
+      "primary_template": "assets/templates/musical-representation.md",
+      "secondary_domains": [
+        "genre-beat-fit",
+        "performance-delivery",
+        "prosody-flow"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "candidate stress/space relationships from supplied structure IR"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/beat_affordance.py <structure.json> -i <lyrics.txt> -o <affordances.json>"
+      }
+    },
+    {
+      "id": "prosody_map",
+      "class": "detection",
+      "script": "scripts/prosody_map.py",
+      "when": "Stress/density/grid friction is the suspected problem",
+      "input": [
+        "text",
+        "BPM"
+      ],
+      "output": "advanced-lyricism.prosody-map.v2",
+      "deterministic": true,
+      "primary_domain": "prosody-flow",
+      "primary_reference": "references/prosody-flow.md",
+      "primary_template": "assets/templates/prosody-flow.md",
+      "secondary_domains": [
+        "revision-evaluation",
+        "rhyme-phonology"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [
+          "pronunciation_dictionary"
+        ],
+        "safe_claims": [
+          "syllable density always; lexical-stress/grid projections only at reported stress coverage"
+        ],
+        "partial_forbidden_claims": [
+          "best stress-grid fit when stress coverage is unavailable"
+        ],
+        "fallback": "Use density-only output and mark stress projections unavailable."
+      },
+      "agent_io": {
+        "summary_flag": "--summary",
+        "prefer_summary_for_first_inspection": true,
+        "prefer_file_output_for_full": true,
+        "full_output_pattern": "python scripts/prosody_map.py <args> -o <scratch.json>",
+        "summary_pattern": "python scripts/prosody_map.py <args> --summary"
+      },
+      "cli": {
+        "first": "python scripts/prosody_map.py -i <lyrics.txt> --bpm <BPM> --summary",
+        "full": "python scripts/prosody_map.py -i <lyrics.txt> --bpm <BPM> -o <prosody.json>"
+      }
+    },
+    {
+      "id": "technique_opportunity",
+      "class": "detection",
+      "script": "scripts/technique_opportunity.py",
+      "when": "Need plausible enjambment, suspension, caesura, gear-change, scheme or callback opportunities",
+      "input": [
+        "text"
+      ],
+      "output": "advanced-lyricism.technique-opportunities.v1",
+      "deterministic": true,
+      "primary_domain": "prosody-flow",
+      "primary_reference": "references/prosody-flow.md",
+      "primary_template": "assets/templates/prosody-flow.md",
+      "secondary_domains": [
+        "concept-architecture"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "syntax/lineation heuristics as opportunities, not prescriptions"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/technique_opportunity.py -i <lyrics.txt> -o <opportunities.json>"
+      }
+    },
+    {
+      "id": "articulation_audit",
+      "class": "detection",
+      "script": "scripts/articulation_audit.py",
+      "when": "Lines stumble or consonant density may be physically awkward",
+      "input": [
+        "text",
+        "BPM"
+      ],
+      "output": "advanced-lyricism.articulation-audit.v2",
+      "deterministic": true,
+      "primary_domain": "rhyme-phonology",
+      "primary_reference": "references/rhyme-phonology.md",
+      "primary_template": "assets/templates/rhyme-phonology.md",
+      "secondary_domains": [
+        "prosody-flow"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [
+          "pronunciation_dictionary"
+        ],
+        "safe_claims": [
+          "density proxy always; phoneme-transition issues only at reported pronunciation coverage"
+        ],
+        "partial_forbidden_claims": [
+          "no articulation issues detected when phoneme data is unavailable"
+        ],
+        "fallback": "Use density-only observations and require rehearsal for articulation."
+      },
+      "agent_io": {
+        "summary_flag": "--summary",
+        "prefer_summary_for_first_inspection": true,
+        "prefer_file_output_for_full": false,
+        "full_output_pattern": "python scripts/articulation_audit.py <args> -o <scratch.json>",
+        "summary_pattern": "python scripts/articulation_audit.py <args> --summary"
+      },
+      "cli": {
+        "first": "python scripts/articulation_audit.py -i <lyrics.txt> --bpm <BPM> --summary",
+        "full": "python scripts/articulation_audit.py -i <lyrics.txt> --bpm <BPM> -o <articulation.json>"
+      }
+    },
+    {
+      "id": "rhyme_grid",
+      "class": "detection",
+      "script": "scripts/rhyme_grid.py",
+      "when": "Need opening/mid/end rhyme-position mapping",
+      "input": [
+        "text"
+      ],
+      "output": "advanced-lyricism.rhyme-grid.v2",
+      "deterministic": true,
+      "primary_domain": "rhyme-phonology",
+      "primary_reference": "references/rhyme-phonology.md",
+      "primary_template": "assets/templates/rhyme-phonology.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [
+          "pronunciation_dictionary"
+        ],
+        "safe_claims": [
+          "opening/mid/ending token positions always; phonological links only where both anchors are covered"
+        ],
+        "partial_forbidden_claims": [
+          "perfect/no rhyme claims for unknown tails",
+          "absence of positional rhyme when links are not comparable"
+        ],
+        "fallback": "Return positions with null similarity for unknown pairs and leave rhyme families unknown until pronunciation is available."
+      },
+      "agent_io": {
+        "summary_flag": "--summary",
+        "prefer_summary_for_first_inspection": true,
+        "prefer_file_output_for_full": true,
+        "full_output_pattern": "python scripts/rhyme_grid.py <args> -o <scratch.json>",
+        "summary_pattern": "python scripts/rhyme_grid.py <args> --summary"
+      },
+      "cli": {
+        "first": "python scripts/rhyme_grid.py -i <lyrics.txt> --summary",
+        "full": "python scripts/rhyme_grid.py -i <lyrics.txt> -o <rhyme-grid.json>"
+      }
+    },
+    {
+      "id": "lexical_cloud",
+      "class": "detection",
+      "script": "scripts/lexical_cloud.py",
+      "when": "Need vocabulary concentration, motif frequency or revision delta",
+      "input": [
+        "text",
+        "optional comparison text"
+      ],
+      "output": "advanced-lyricism.lexical-cloud.v1",
+      "deterministic": true,
+      "primary_domain": "lexical-engineering",
+      "primary_reference": "references/lexical-engineering.md",
+      "primary_template": "assets/templates/lexical-engineering.md",
+      "secondary_domains": [
+        "creative-operations",
+        "hook-song-form"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "conditional_capabilities": {
+          "png": "wordcloud_png",
+          "stem": "porter_stemming"
+        },
+        "safe_claims": [
+          "lexical frequency/collocation JSON without optional rendering/stemming"
+        ],
+        "fallback": "Install or enable the missing optional capability; continue the base lexical JSON route while PNG or stemming becomes available."
+      },
+      "cli": {
+        "first": "python scripts/lexical_cloud.py -i <lyrics.txt> -o <lexical.json>",
+        "compare": "python scripts/lexical_cloud.py -i <draft-a.txt> --compare <draft-b.txt> -o <lexical-delta.json>",
+        "png": "python scripts/lexical_cloud.py -i <lyrics.txt> --png <cloud.png> -o <lexical.json>"
+      }
+    },
+    {
+      "id": "rhyme_suggester",
+      "class": "generation",
+      "script": "scripts/rhyme_suggester.py",
+      "when": "Need phonetic/slant rhyme candidates without committing to meaning",
+      "input": [
+        "target word"
+      ],
+      "output": "advanced-lyricism.rhyme-suggestions.v3",
+      "deterministic": true,
+      "primary_domain": "lexical-engineering",
+      "primary_reference": "references/lexical-engineering.md",
+      "primary_template": "assets/templates/lexical-engineering.md",
+      "secondary_domains": [
+        "creative-operations",
+        "rhetoric-impact"
+      ],
+      "runtime": {
+        "required_capabilities": [
+          "pronunciation_dictionary"
+        ],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "dictionary-backed candidate search with explicit accent limitation"
+        ],
+        "fallback": "If blocked, use manual/user-pronunciation ideation rather than lexical suffix guessing."
+      },
+      "cli": {
+        "first": "python scripts/rhyme_suggester.py <target-word> -n 20 -o <rhymes.json>",
+        "accent_override": "python scripts/rhyme_suggester.py <target-word> --pronunciation-json <arpabet.json> -n 20 -o <rhymes.json>"
+      }
+    },
+    {
+      "id": "word_rearranger",
+      "class": "transform",
+      "script": "scripts/word_rearranger.py",
+      "when": "Strong words exist but syntax/emphasis/order may be weak",
+      "input": [
+        "text",
+        "seed"
+      ],
+      "output": "advanced-lyricism.word-rearrangements.v1",
+      "deterministic_with_seed": true,
+      "primary_domain": "concept-architecture",
+      "primary_reference": "references/concept-architecture.md",
+      "primary_template": "assets/templates/concept-architecture.md",
+      "secondary_domains": [
+        "lexical-engineering",
+        "narrative-scene"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "seeded clause/word-order transformations under explicit constraints"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/word_rearranger.py -i <lines.txt> -n 8 --seed 17 -o <variants.json>"
+      }
+    },
+    {
+      "id": "idea_lab",
+      "class": "generation_transform",
+      "script": "scripts/idea_lab.py",
+      "when": "Need structural grammar, mutation, collision, permutation or random-walk exploration",
+      "input": [
+        "concepts and/or text",
+        "seed"
+      ],
+      "output": "advanced-lyricism.idea-lab.v2",
+      "deterministic_with_seed": true,
+      "primary_domain": "concept-architecture",
+      "primary_reference": "references/concept-architecture.md",
+      "primary_template": "assets/templates/concept-architecture.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "seeded structural/semantic ideation; selection remains separate"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/idea_lab.py --mode grammar --concepts '<a>,<b>,<c>' -n 8 --seed 17 -o <ideas.json>"
+      }
+    },
+    {
+      "id": "arc_generator",
+      "class": "generation",
+      "script": "scripts/arc_generator.py",
+      "when": "Need a relative section curve for density/tension/exposure/etc.",
+      "input": [
+        "bars",
+        "dimensions",
+        "shape",
+        "seed"
+      ],
+      "output": "advanced-lyricism.arc-plan.v1",
+      "deterministic_with_seed": true,
+      "primary_domain": "concept-architecture",
+      "primary_reference": "references/concept-architecture.md",
+      "primary_template": "assets/templates/concept-architecture.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "seeded parameter curves; not dramatic truth"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/arc_generator.py --bars 16 --shape arch --seed 17 -o <arc.json>"
+      }
+    },
+    {
+      "id": "cadence_lab",
+      "class": "generation",
+      "script": "scripts/cadence_lab.py",
+      "when": "Need alternative slot geometries for a syllable budget",
+      "input": [
+        "syllable count",
+        "family",
+        "seed"
+      ],
+      "output": "advanced-lyricism.cadence-candidates.v1",
+      "deterministic_with_seed": true,
+      "primary_domain": "prosody-flow",
+      "primary_reference": "references/prosody-flow.md",
+      "primary_template": "assets/templates/prosody-flow.md",
+      "secondary_domains": [
+        "musical-representation"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "candidate slot geometries; not performed flow"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/cadence_lab.py --syllables <N> --family auto -n 8 --seed 17 -o <cadences.json>"
+      }
+    },
+    {
+      "id": "craft_audit",
+      "class": "evaluation",
+      "script": "scripts/craft_audit.py",
+      "when": "Need broad mechanical text-first audit",
+      "input": [
+        "text",
+        "optional BPM"
+      ],
+      "output": "advanced-lyricism.craft-audit.v2",
+      "deterministic": true,
+      "primary_domain": "revision-evaluation",
+      "primary_reference": "references/revision-evaluation.md",
+      "primary_template": "assets/templates/revision-evaluation.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [
+          "pronunciation_dictionary"
+        ],
+        "safe_claims": [
+          "line/word/density/repetition metrics always; phonological metrics only when coverage is reported"
+        ],
+        "partial_forbidden_claims": [
+          "zero rhyme-family coverage as proof of no rhyme",
+          "zero internal echoes when pronunciation data is unavailable"
+        ],
+        "fallback": "Return null/unavailable phonological metrics while keeping lexical/density observations."
+      },
+      "agent_io": {
+        "prefer_summary_for_first_inspection": true,
+        "summary_pattern": "python scripts/craft_audit.py <input> --format markdown",
+        "prefer_file_output_for_full": false
+      },
+      "cli": {
+        "first": "python scripts/craft_audit.py <lyrics.txt> --bpm <BPM> --format markdown",
+        "full": "python scripts/craft_audit.py <lyrics.txt> --bpm <BPM> > <craft.json>"
+      }
+    },
+    {
+      "id": "workbench",
+      "class": "evaluation_aggregate",
+      "script": "scripts/workbench.py",
+      "when": "A real draft exists and several diagnostics are relevant",
+      "input": [
+        "text",
+        "optional music-structure IR"
+      ],
+      "output": "advanced-lyricism.workbench.v2",
+      "deterministic": true,
+      "primary_domain": "revision-evaluation",
+      "primary_reference": "references/revision-evaluation.md",
+      "primary_template": "assets/templates/revision-evaluation.md",
+      "secondary_domains": [
+        "creative-operations"
+      ],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [
+          "pronunciation_dictionary"
+        ],
+        "safe_claims": [
+          "aggregate component outputs with per-component support status"
+        ],
+        "partial_forbidden_claims": [
+          "cross-component diagnosis that treats unavailable phonology as zero"
+        ],
+        "fallback": "Aggregate every available component, leave unavailable measurements empty, and continue with close reading and rehearsal."
+      },
+      "agent_io": {
+        "summary_flag": "--summary",
+        "prefer_summary_for_first_inspection": true,
+        "prefer_file_output_for_full": true,
+        "full_output_pattern": "python scripts/workbench.py <args> -o <scratch.json>",
+        "summary_pattern": "python scripts/workbench.py <args> --summary"
+      },
+      "cli": {
+        "first": "python scripts/workbench.py -i <lyrics.txt> --bpm <BPM> --summary",
+        "full": "python scripts/workbench.py -i <lyrics.txt> --bpm <BPM> -o <workbench.json>"
+      }
+    },
+    {
+      "id": "beat_profile_summary",
+      "class": "representation",
+      "script": "scripts/beat_profile_summary.py",
+      "when": "Using bundled beat JSON profiles",
+      "input": [
+        "beat JSON"
+      ],
+      "output": "summary JSON",
+      "deterministic": true,
+      "primary_domain": "musical-representation",
+      "primary_reference": "references/musical-representation.md",
+      "primary_template": "assets/templates/musical-representation.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "summary of bundled beat-profile JSON"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/beat_profile_summary.py <assets/beat-profiles/profile.json> --markdown"
+      }
+    },
+    {
+      "id": "wav_energy_probe",
+      "class": "representation",
+      "script": "scripts/wav_energy_probe.py",
+      "when": "A PCM WAV needs energy, coarse pulse or section-change mapping",
+      "input": ["PCM WAV audio"],
+      "output": "advanced-lyricism.wav-energy-profile.v1",
+      "deterministic": true,
+      "primary_domain": "musical-representation",
+      "primary_reference": "references/musical-representation.md",
+      "primary_template": "assets/templates/musical-representation.md",
+      "secondary_domains": ["genre-beat-fit", "hook-song-form"],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": ["PCM WAV duration, relative frame energy, section changes and a coarse pulse candidate"],
+        "partial_forbidden_claims": ["formal section names", "key or harmony", "confirmed BPM or half/double-time feel"]
+      },
+      "cli": {"first": "python scripts/wav_energy_probe.py <beat.wav> -o <wav-energy.json>"}
+    },
+    {
+      "id": "beat_metadata_reconcile",
+      "class": "detection",
+      "script": "scripts/beat_metadata_reconcile.py",
+      "when": "Beat metadata BPM/key claims need comparison with analysis output",
+      "input": ["audio/WAV/MIDI/beat analysis JSON", "metadata text"],
+      "output": "advanced-lyricism.beat-metadata-reconcile.v1",
+      "deterministic": true,
+      "primary_domain": "musical-representation",
+      "primary_reference": "references/musical-representation.md",
+      "primary_template": "assets/templates/musical-representation.md",
+      "secondary_domains": ["genre-beat-fit"],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": ["BPM/key claim extraction and same/half/double-time comparison against supplied analysis fields"]
+      },
+      "cli": {"first": "python scripts/beat_metadata_reconcile.py <analysis.json> --text \"142 BPM F# minor\" -o <metadata-check.json>"}
+    },
+    {
+      "id": "semantic_field_map",
+      "class": "detection",
+      "script": "scripts/semantic_field_map.py",
+      "when": "Lyrics need semantic-field distribution, progression or collision mapping",
+      "input": ["text", "universal or uk-drill preset", "optional custom field JSON"],
+      "output": "advanced-lyricism.semantic-field-map.v1",
+      "deterministic": true,
+      "primary_domain": "lexical-engineering",
+      "primary_reference": "references/lexical-engineering.md",
+      "primary_template": "assets/templates/lexical-engineering.md",
+      "secondary_domains": ["concept-architecture", "narrative-scene", "rhetoric-impact", "revision-evaluation", "creative-operations"],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": ["configured term matches, line progression, co-occurring fields and unmapped repeated terms"]
+      },
+      "cli": {
+        "first": "python scripts/semantic_field_map.py -i <lyrics.txt> -o <fields.json>",
+        "uk_drill": "python scripts/semantic_field_map.py -i <lyrics.txt> --preset uk-drill -o <fields.json>",
+        "custom": "python scripts/semantic_field_map.py -i <lyrics.txt> --fields <fields.json> -o <map.json>"
+      }
+    },
+    {
+      "id": "context_query_plan",
+      "class": "generation",
+      "script": "scripts/context_query_plan.py",
+      "when": "Current language, artist, scene, production or reference context can change the lyric",
+      "input": ["phrase or text", "research intent", "optional area and period"],
+      "output": "advanced-lyricism.context-query-plan.v1",
+      "deterministic": true,
+      "primary_domain": "context-research",
+      "primary_reference": "references/context-research.md",
+      "primary_template": "assets/templates/context-research.md",
+      "secondary_domains": ["voice-register", "genre-beat-fit", "lexical-engineering"],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": ["ordered research queries and working MLE sense candidates; network execution remains separate"]
+      },
+      "cli": {"first": "python scripts/context_query_plan.py <phrase> --intent usage,scene --area <place> --year <period> -o <queries.json>"}
+    },
+    {
+      "id": "scene_graph",
+      "class": "representation",
+      "script": "scripts/scene_graph.py",
+      "when": "Supplied scene relationships need neighbourhood or connection mapping",
+      "input": ["JSON, JSONL or CSV relationship rows"],
+      "output": "advanced-lyricism.scene-graph.v1",
+      "deterministic": true,
+      "primary_domain": "context-research",
+      "primary_reference": "references/context-research.md",
+      "primary_template": "assets/templates/context-research.md",
+      "secondary_domains": ["concept-architecture", "genre-beat-fit"],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": ["nodes, typed supplied relationships, bounded neighbourhoods and connection paths"]
+      },
+      "cli": {"first": "python scripts/scene_graph.py <relationships.json> --focus <node> --hops 2 -o <scene-graph.json>"}
+    },
+    {
+      "id": "preference_profile",
+      "class": "detection",
+      "script": "scripts/preference_profile.py",
+      "when": "Supplied keep/reject history can guide selection or revision",
+      "input": ["JSON, JSONL or CSV feedback rows with ratings and optional feature values"],
+      "output": "advanced-lyricism.preference-profile.v1",
+      "deterministic": true,
+      "primary_domain": "revision-evaluation",
+      "primary_reference": "references/revision-evaluation.md",
+      "primary_template": "assets/templates/revision-evaluation.md",
+      "secondary_domains": ["context-research", "voice-register", "creative-operations"],
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": ["feature associations and stated reasons within supplied feedback history"]
+      },
+      "cli": {"first": "python scripts/preference_profile.py <feedback.json> -o <preferences.json>"}
+    },
+    {
+      "id": "dependency_check",
+      "class": "support",
+      "script": "scripts/dependency_check.py",
+      "when": "Before a tool that depends on an optional local package",
+      "input": [],
+      "output": "advanced-lyricism.dependencies.v1",
+      "deterministic": true,
+      "primary_domain": "runtime-orchestration",
+      "primary_reference": "references/runtime-orchestration.md",
+      "primary_template": "assets/templates/runtime-orchestration.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "runtime provider/capability availability only"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/dependency_check.py",
+        "required": "python scripts/dependency_check.py --required <capability[,capability]>"
+      }
+    },
+    {
+      "id": "tool_router",
+      "class": "support_planner",
+      "script": "scripts/tool_router.py",
+      "when": "Before any Skill-local tool or pipeline execution",
+      "input": [
+        "tool id or pipeline id",
+        "optional conditional modes"
+      ],
+      "output": "advanced-lyricism.tool-plan.v1 or pipeline-plan.v1",
+      "deterministic": true,
+      "primary_domain": "runtime-orchestration",
+      "primary_reference": "references/runtime-orchestration.md",
+      "primary_template": "assets/templates/runtime-orchestration.md",
+      "runtime": {
+        "required_capabilities": [],
+        "preferred_capabilities": [],
+        "safe_claims": [
+          "runtime route, state, dependency and support-gate planning only"
+        ]
+      },
+      "cli": {
+        "first": "python scripts/tool_router.py --tool <tool_id>",
+        "pipeline": "python scripts/tool_router.py --pipeline <pipeline_id>",
+        "inventory": "python scripts/tool_router.py --list"
+      }
+    }
+  ],
+  "pipelines": [
+    {
+      "name": "revision_targeted",
+      "purpose": "Improve a real draft with every applicable diagnostic and repair path.",
+      "steps": [
+        {
+          "type": "preflight",
+          "tool": "tool_router",
+          "operation": "plan pipeline before execution"
+        },
+        {
+          "type": "baseline",
+          "tool": "craft_audit",
+          "note": "incorporate every available measurement and observation; keep unavailable fields unknown"
+        },
+        {
+          "type": "decision_point",
+        "note": "map the full defect and opportunity set from supported observations, then integrate targeted and aggregate output"
+        },
+        {
+          "type": "targeted",
+          "tools": [
+            "rhyme_grid",
+            "prosody_map",
+            "articulation_audit",
+            "technique_opportunity",
+            "lexical_cloud",
+            "semantic_field_map",
+            "preference_profile",
+            "delivery_notation"
+          ]
+        },
+        {
+          "type": "confirm_optional",
+          "tool": "workbench",
+        "note": "run aggregate confirmation after targeted diagnostics, then feed its component findings back to the owning domains"
+        },
+        {
+          "type": "audition",
+          "note": "compare revision against baseline in text/beat/performance"
+        }
+      ]
+    },
+    {
+      "name": "midi_to_verse",
+      "purpose": "Plan lyric timing from MIDI while retaining raw event timing.",
+      "steps": [
+        "tool_router:midi_to_json",
+        "midi_to_json",
+        "music_structure",
+        "decision_point",
+        "beat_affordance",
+        "prosody_map",
+        "delivery_notation"
+      ]
+    },
+    {
+      "name": "audio_to_verse",
+      "purpose": "Plan lyric timing from supplied audio.",
+      "steps": [
+        "tool_router:audio_to_json",
+        "audio_to_json",
+        "wav_energy_probe",
+        "music_structure",
+        "decision_point",
+        "beat_metadata_reconcile",
+        "beat_affordance",
+        "prosody_map"
+      ]
+    },
+    {
+      "name": "controlled_ideation",
+      "purpose": "Generate alternatives with reproducible variation and separate selection.",
+      "steps": [
+        "tool_router:idea_lab",
+        "semantic_field_map",
+        "preference_profile",
+        "idea_lab",
+        "decision_point",
+        "arc_generator_or_word_rearranger",
+        "evaluate_separately"
+      ]
+    },
+    {
+      "name": "lyric_compound",
+      "purpose": "Build or rewrite lyrics by compounding every applicable context, meaning, sound, beat, form, performance and evaluation layer.",
+      "domains": [
+        "context-research", "concept-architecture", "voice-register",
+        "narrative-scene", "lexical-engineering", "rhetoric-impact", "creative-operations",
+        "rhyme-phonology", "prosody-flow", "performance-delivery",
+        "musical-representation", "genre-beat-fit", "hook-song-form",
+        "revision-evaluation", "runtime-orchestration"
+      ],
+      "steps": [
+        {
+          "type": "preflight",
+          "tool": "tool_router",
+            "operation": "preflight the compound path, record available capabilities, and keep every applicable tool in the plan; partial capabilities contribute their supported measurements"
+        },
+        {
+          "type": "stage",
+          "name": "represent",
+          "domains": ["musical-representation", "rhyme-phonology"],
+          "tools": ["midi_to_json", "audio_to_json", "wav_energy_probe", "phoneme_map"],
+          "when": "MIDI, audio or pronunciation-sensitive text is supplied",
+          "produces": "stable event, beat and phoneme representations"
+        },
+        {
+          "type": "stage",
+          "name": "foundation",
+          "domains": ["context-research", "concept-architecture", "voice-register"],
+          "tools": ["context_query_plan", "scene_graph", "preference_profile", "idea_lab", "arc_generator", "lexical_cloud", "semantic_field_map", "word_rearranger"],
+          "produces": "grounded brief, speaker model, pressure spine and candidate directions"
+        },
+        {
+          "type": "stage",
+          "name": "event_meaning",
+          "domains": ["narrative-scene", "lexical-engineering", "rhetoric-impact", "creative-operations"],
+          "tools": ["technique_opportunity", "lexical_cloud", "semantic_field_map", "rhyme_suggester", "word_rearranger", "arc_generator"],
+          "produces": "causal scene, semantic fields, rhetorical turns and controlled variants"
+        },
+        {
+          "type": "decision_point",
+          "note": "integrate foundation and meaning artifacts before sound or timing selects wording"
+        },
+        {
+          "type": "stage",
+          "name": "sound_time_performance",
+          "domains": ["rhyme-phonology", "prosody-flow", "performance-delivery"],
+          "tools": ["phoneme_map", "rhyme_grid", "prosody_map", "cadence_lab", "articulation_audit", "delivery_notation"],
+          "produces": "heard rhyme network, stress grid, cadence arc and rehearsal map"
+        },
+        {
+          "type": "stage",
+          "name": "music_form",
+          "domains": ["musical-representation", "genre-beat-fit", "hook-song-form"],
+          "tools": ["music_structure", "beat_profile_summary", "beat_metadata_reconcile", "beat_affordance"],
+          "produces": "beat-fit constraints, section contrast and return logic"
+        },
+        {
+          "type": "stage",
+          "name": "evaluate_integrate",
+          "domains": ["revision-evaluation"],
+          "tools": ["craft_audit", "workbench", "technique_opportunity", "semantic_field_map", "preference_profile", "articulation_audit", "rhyme_grid", "prosody_map", "delivery_notation"],
+          "produces": "cross-layer defect map and accepted revision set"
+        },
+        {
+          "type": "audition",
+          "note": "audition the integrated result and route each defect backward to every owning domain"
+        }
+      ]
+    },
+    {
+      "name": "narrative_drill_compound",
+      "purpose": "Compound current context, drill beat, speaker register, causal narrative, rhetoric, sound and delivery.",
+      "domains": [
+        "context-research", "genre-beat-fit", "voice-register", "concept-architecture",
+        "narrative-scene", "lexical-engineering", "rhetoric-impact", "creative-operations",
+        "musical-representation", "rhyme-phonology", "prosody-flow", "performance-delivery",
+        "hook-song-form", "revision-evaluation", "runtime-orchestration"
+      ],
+      "steps": [
+        {"type": "preflight", "tool": "tool_router", "operation": "preflight every applicable drill compound tool"},
+        {"type": "stage", "name": "beat_context", "domains": ["context-research", "musical-representation", "genre-beat-fit"], "tools": ["context_query_plan", "scene_graph", "audio_to_json", "wav_energy_probe", "midi_to_json", "music_structure", "beat_profile_summary", "beat_metadata_reconcile", "beat_affordance"], "produces": "current context, scene relationships and actual beat constraints"},
+        {"type": "stage", "name": "speaker_pressure", "domains": ["voice-register", "concept-architecture"], "tools": ["preference_profile", "lexical_cloud", "semantic_field_map", "idea_lab", "arc_generator"], "produces": "speaker model, exclusions, drill lane controls, pressure and choice"},
+        {"type": "stage", "name": "scene_language", "domains": ["narrative-scene", "lexical-engineering", "rhetoric-impact", "creative-operations"], "tools": ["arc_generator", "lexical_cloud", "semantic_field_map", "word_rearranger", "rhyme_suggester", "technique_opportunity"], "produces": "causal scenes, precise local fields and property-locked turns"},
+        {"type": "decision_point", "note": "reject any marker unsupported by the supplied speaker, current context or intended scene"},
+        {"type": "stage", "name": "sound_delivery", "domains": ["rhyme-phonology", "prosody-flow", "performance-delivery", "hook-song-form"], "tools": ["phoneme_map", "rhyme_grid", "prosody_map", "cadence_lab", "articulation_audit", "delivery_notation"], "produces": "rhyme, pocket, breath, ad-lib and return plan"},
+        {"type": "stage", "name": "evaluate", "domains": ["revision-evaluation"], "tools": ["craft_audit", "workbench", "technique_opportunity", "semantic_field_map", "preference_profile"], "produces": "integrated defects and revision feedback"},
+        {"type": "audition", "note": "audition against speaker credibility, consequence, beat space and performance"}
+      ]
+    },
+    {
+      "name": "beat_locked_compound",
+      "purpose": "Keep the supplied beat live while concept, wording, rhyme, cadence and delivery are built together.",
+      "domains": [
+        "musical-representation", "genre-beat-fit", "voice-register", "concept-architecture",
+        "lexical-engineering", "rhetoric-impact", "rhyme-phonology", "prosody-flow",
+        "performance-delivery", "hook-song-form", "revision-evaluation", "runtime-orchestration"
+      ],
+      "steps": [
+        {"type": "preflight", "tool": "tool_router", "operation": "preflight music representation and all downstream assisting tools"},
+        {"type": "stage", "name": "represent_beat", "domains": ["musical-representation", "genre-beat-fit"], "tools": ["midi_to_json", "audio_to_json", "wav_energy_probe", "music_structure", "beat_profile_summary", "beat_metadata_reconcile", "beat_affordance"], "produces": "raw-preserving beat and section constraints"},
+        {"type": "stage", "name": "meaning_voice", "domains": ["voice-register", "concept-architecture", "lexical-engineering", "rhetoric-impact"], "tools": ["idea_lab", "lexical_cloud", "semantic_field_map", "word_rearranger", "rhyme_suggester"], "produces": "beat-compatible but meaning-led candidate language"},
+        {"type": "stage", "name": "sound_time", "domains": ["rhyme-phonology", "prosody-flow", "performance-delivery"], "tools": ["phoneme_map", "rhyme_grid", "prosody_map", "cadence_lab", "articulation_audit", "delivery_notation"], "produces": "beat-anchored heard rhyme, cadence and delivery"},
+        {"type": "stage", "name": "form_evaluate", "domains": ["hook-song-form", "revision-evaluation"], "tools": ["arc_generator", "craft_audit", "technique_opportunity", "semantic_field_map", "preference_profile", "workbench"], "produces": "section movement, return logic and integrated revision"},
+        {"type": "audition", "note": "recheck every accepted wording change against the beat representation and voice"}
+      ]
+    },
+    {
+      "name": "hook_compound",
+      "purpose": "Build hook identity by compounding concept, voice, lexical memory, changed return meaning, beat contrast and performance.",
+      "domains": [
+        "context-research", "concept-architecture", "voice-register", "creative-operations",
+        "narrative-scene", "lexical-engineering", "rhetoric-impact",
+        "musical-representation", "genre-beat-fit", "hook-song-form",
+        "rhyme-phonology", "prosody-flow", "performance-delivery",
+        "revision-evaluation", "runtime-orchestration"
+      ],
+      "steps": [
+        {"type": "preflight", "tool": "tool_router", "operation": "preflight every applicable hook compound tool"},
+        {"type": "stage", "name": "identity", "domains": ["context-research", "concept-architecture", "voice-register", "creative-operations"], "tools": ["context_query_plan", "scene_graph", "preference_profile", "idea_lab", "arc_generator", "lexical_cloud", "semantic_field_map", "word_rearranger"], "produces": "central proposition, speaker address and variant identities"},
+        {"type": "stage", "name": "meaning_memory", "domains": ["narrative-scene", "lexical-engineering", "rhetoric-impact"], "tools": ["lexical_cloud", "semantic_field_map", "rhyme_suggester", "technique_opportunity"], "produces": "memorable phrase field and changed return meanings"},
+        {"type": "stage", "name": "music_form", "domains": ["musical-representation", "genre-beat-fit", "hook-song-form"], "tools": ["midi_to_json", "audio_to_json", "wav_energy_probe", "music_structure", "beat_profile_summary", "beat_metadata_reconcile", "beat_affordance", "cadence_lab"], "produces": "entry, drop, participation, contrast and return architecture"},
+        {"type": "stage", "name": "sound_performance", "domains": ["rhyme-phonology", "prosody-flow", "performance-delivery"], "tools": ["phoneme_map", "rhyme_grid", "prosody_map", "articulation_audit", "delivery_notation"], "produces": "vowel identity, cadence, breath, pitch and response slots"},
+        {"type": "stage", "name": "evaluate", "domains": ["revision-evaluation"], "tools": ["craft_audit", "semantic_field_map", "preference_profile", "workbench"], "produces": "identity, recall, contrast and performability revision"},
+        {"type": "audition", "note": "audition every return in its changed verse context, not as an isolated loop"}
+      ]
+    },
+    {
+      "name": "revision_compound",
+      "purpose": "Run a full baseline, every relevant detector and backward domain repair while preserving each component's support state.",
+      "domains": [
+        "revision-evaluation", "runtime-orchestration", "concept-architecture", "narrative-scene",
+        "voice-register", "lexical-engineering", "rhetoric-impact", "musical-representation",
+        "genre-beat-fit", "hook-song-form", "rhyme-phonology", "prosody-flow",
+        "performance-delivery", "creative-operations"
+      ],
+      "steps": [
+        {"type": "preflight", "tool": "tool_router", "operation": "preflight baseline, every applicable detector and all repair generators"},
+        {"type": "stage", "name": "baseline", "domains": ["revision-evaluation"], "tools": ["craft_audit", "workbench"], "produces": "component-preserving whole-draft baseline"},
+        {"type": "stage", "name": "targeted_detection", "domains": ["rhyme-phonology", "prosody-flow", "performance-delivery", "lexical-engineering"], "tools": ["rhyme_grid", "prosody_map", "articulation_audit", "technique_opportunity", "lexical_cloud", "semantic_field_map", "preference_profile", "delivery_notation", "phoneme_map"], "produces": "localized observations by defect class"},
+        {"type": "decision_point", "note": "map every supported defect to all owning domains before generating repairs"},
+        {"type": "stage", "name": "repair", "domains": ["concept-architecture", "narrative-scene", "voice-register", "lexical-engineering", "rhetoric-impact", "creative-operations", "hook-song-form"], "tools": ["idea_lab", "arc_generator", "word_rearranger", "rhyme_suggester", "cadence_lab"], "produces": "coordinated repair candidates with locked dimensions"},
+        {"type": "stage", "name": "recheck_music_form", "domains": ["musical-representation", "genre-beat-fit", "hook-song-form"], "tools": ["midi_to_json", "audio_to_json", "wav_energy_probe", "music_structure", "beat_profile_summary", "beat_metadata_reconcile", "beat_affordance"], "when": "beat, audio, MIDI or section-form material exists", "produces": "confirmation that repairs still fit music and form"},
+        {"type": "stage", "name": "confirm", "domains": ["revision-evaluation"], "tools": ["craft_audit", "workbench", "semantic_field_map", "preference_profile", "rhyme_grid", "prosody_map", "articulation_audit"], "produces": "baseline comparison and accepted revision set"},
+        {"type": "audition", "note": "retain the integrated repair only when meaning, voice, beat and performance improve together"}
+      ]
+    },
+    {
+      "name": "script_sweep",
+      "purpose": "When the user explicitly asks to run through tools/scripts, preflight the full catalog and execute every applicable operation that can assist the task.",
+      "steps": [
+        {
+          "type": "preflight",
+          "tool": "tool_router",
+          "operation": "list applicable tools by available input and runtime state"
+        },
+        {
+          "type": "catalog",
+          "tools": [
+            "dependency_check", "tool_router",
+            "midi_to_json", "audio_to_json", "wav_energy_probe", "phoneme_map", "delivery_notation", "scene_graph",
+            "music_structure", "beat_profile_summary", "beat_metadata_reconcile", "beat_affordance",
+            "lexical_cloud", "semantic_field_map", "context_query_plan", "preference_profile",
+            "prosody_map", "technique_opportunity", "articulation_audit", "rhyme_grid", "craft_audit", "workbench",
+            "rhyme_suggester", "word_rearranger", "idea_lab", "arc_generator", "cadence_lab"
+          ],
+          "produces": "a full-catalog applicability plan grouped by input dependency and craft decision"
+        },
+        {
+          "type": "decision_point",
+        "note": "execute every operation that has applicable input and can assist, pass each output to all consumers, and use aggregate confirmation after targeted diagnostics"
+        }
+      ]
+    }
+  ],
+  "routing_rule": "Select or assemble a layered domain bundle, then preflight its complete tool chain through scripts/tool_router.py. Execute every applicable operation that can assist, pass artifacts forward explicitly, base interpretations on each full/partial/blocked support state, and preserve unknown/unavailable measurements as null."
+}

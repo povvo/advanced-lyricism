@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WAV Energy Profile",
+  "type": "object",
+  "required": ["schema", "source", "audio", "energy_frames", "sections", "pulse", "limits"],
+  "properties": {
+    "schema": {"const": "advanced-lyricism.wav-energy-profile.v1"},
+    "source": {"type": "object"},
+    "audio": {"type": "object"},
+    "energy_frames": {"type": "array"},
+    "sections": {"type": "array"},
+    "pulse": {"type": "object"},
+    "limits": {"type": "array", "items": {"type": "string"}}
+  }
+}

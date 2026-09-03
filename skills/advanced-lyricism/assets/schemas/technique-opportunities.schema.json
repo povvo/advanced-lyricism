@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Advanced Lyricism Technique Opportunities",
+  "type": "object",
+  "required": [
+    "schema",
+    "summary",
+    "opportunities",
+    "limits"
+  ],
+  "properties": {
+    "schema": {
+      "const": "advanced-lyricism.technique-opportunities.v1"
+    },
+    "summary": {
+      "type": "object"
+    },
+    "opportunities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

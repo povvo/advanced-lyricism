@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Beat Metadata Reconciliation",
+  "type": "object",
+  "required": ["schema", "measured", "metadata_claims", "comparison", "issues", "limits"],
+  "properties": {
+    "schema": {"const": "advanced-lyricism.beat-metadata-reconcile.v1"},
+    "source_schema": {"type": ["string", "null"]},
+    "measured": {"type": "object"},
+    "metadata_claims": {"type": "object"},
+    "comparison": {"type": "object"},
+    "issues": {"type": "array", "items": {"type": "string"}},
+    "limits": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Advanced Lyricism"
+  short_description: "Voice-preserving lyric craft and music mapping"
+  default_prompt: "Preserve the user's voice, subject, material, and methods. Compound meaning, structure, narrative, language, rhyme, prosody, music, genre, performance, hooks, and revision; run every applicable local tool that can assist and pass its output through the connected craft layers."

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Advanced Lyricism MIDI Music Event IR",
+  "type": "object",
+  "required": [
+    "schema",
+    "source",
+    "timing",
+    "summary",
+    "notes",
+    "tracks",
+    "representation"
+  ],
+  "properties": {
+    "schema": {
+      "const": "advanced-lyricism.music-event-ir.v1"
+    },
+    "source": {
+      "type": "object"
+    },
+    "timing": {
+      "type": "object"
+    },
+    "summary": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "representation": {
+      "type": "object"
+    }
+  }
+}

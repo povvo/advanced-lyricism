@@ -1,0 +1,27 @@
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments
+.venv/
+venv/
+
+# Generated packages and build output
+dist/
+build/
+*.skill
+
+# Local-only workspace state
+.local-cache/
+.env
+.env.*
+
+# Operating-system and editor debris
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantic Field Map",
+  "type": "object",
+  "required": ["schema", "preset", "summary", "fields", "line_progression", "field_collisions", "limits"],
+  "properties": {
+    "schema": {"const": "advanced-lyricism.semantic-field-map.v1"},
+    "preset": {"type": "string"},
+    "summary": {"type": "object"},
+    "fields": {"type": "array"},
+    "line_progression": {"type": "array"},
+    "field_collisions": {"type": "array"},
+    "limits": {"type": "array", "items": {"type": "string"}}
+  }
+}

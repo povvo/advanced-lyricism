@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Advanced Lyricism Phoneme Map",
+  "type": "object",
+  "required": [
+    "schema",
+    "support_status",
+    "summary",
+    "lines",
+    "limits"
+  ],
+  "properties": {
+    "schema": {
+      "const": "advanced-lyricism.phoneme-map.v2"
+    },
+    "support_status": {
+      "type": "object"
+    },
+    "summary": {
+      "type": "object"
+    },
+    "lines": {
+      "type": "array"
+    },
+    "limits": {
+      "type": "array"
+    }
+  }
+}

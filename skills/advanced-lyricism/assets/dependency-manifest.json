@@ -1,0 +1,134 @@
+{
+  "schema": "advanced-lyricism.dependency-manifest.v2",
+  "policy": {
+    "core_rule": "A missing optional dependency must never be encoded as a negative craft measurement.",
+    "states": [
+      "full",
+      "partial",
+      "blocked"
+    ],
+    "unknown_rule": "unavailable/unknown metrics are null or explicitly unavailable, never numeric zero",
+    "preflight_rule": "plan every script call through tool_router.py; execute only within its declared full/partial/blocked support gate"
+  },
+  "providers": {
+    "bundled_cmudict": {
+      "kind": "bundled_asset",
+      "path": "assets/phonology/cmudict.dict.gz",
+      "capabilities": [
+        "pronunciation_dictionary",
+        "phoneme_tail",
+        "lexical_stress"
+      ],
+      "required": false
+    },
+    "cmudict": {
+      "kind": "python_module",
+      "module": "cmudict",
+      "capabilities": [
+        "pronunciation_dictionary",
+        "phoneme_tail",
+        "lexical_stress"
+      ],
+      "required": false
+    },
+    "pronouncing": {
+      "kind": "python_module",
+      "module": "pronouncing",
+      "capabilities": [
+        "single_word_pronunciation"
+      ],
+      "required": false
+    },
+    "mido": {
+      "kind": "python_module",
+      "module": "mido",
+      "capabilities": [
+        "midi_parse"
+      ],
+      "required": false
+    },
+    "numpy": {
+      "kind": "python_module",
+      "module": "numpy",
+      "capabilities": [
+        "numeric_array"
+      ],
+      "required": false
+    },
+    "librosa": {
+      "kind": "python_module",
+      "module": "librosa",
+      "capabilities": [
+        "audio_feature_analysis"
+      ],
+      "required": false
+    },
+    "soundfile": {
+      "kind": "python_module",
+      "module": "soundfile",
+      "capabilities": [
+        "audio_decode"
+      ],
+      "required": false
+    },
+    "wordcloud": {
+      "kind": "python_module",
+      "module": "wordcloud",
+      "capabilities": [
+        "wordcloud_png"
+      ],
+      "required": false
+    },
+    "nltk": {
+      "kind": "python_module",
+      "module": "nltk",
+      "capabilities": [
+        "porter_stemming"
+      ],
+      "required": false
+    },
+    "bundled_mido": {
+      "kind": "bundled_asset",
+      "path": "scripts/vendor/mido/__init__.py",
+      "capabilities": [
+        "midi_parse"
+      ],
+      "required": false
+    }
+  },
+  "capabilities": {
+    "pronunciation_dictionary": {
+      "any_of": [
+        "bundled_cmudict",
+        "cmudict"
+      ],
+      "notes": "Required for phonological rhyme/stress claims. User pronunciation may override entries."
+    },
+    "midi_parse": {
+      "any_of": [
+        "bundled_mido",
+        "mido"
+      ],
+      "notes": "MIDI parsing is self-contained via vendored mido, with installed mido accepted as an equivalent provider."
+    },
+    "audio_analysis": {
+      "all_of": [
+        "numpy",
+        "librosa"
+      ],
+      "notes": "Audio conversion blocks if unavailable; supplied BPM may still be used manually."
+    },
+    "wordcloud_png": {
+      "any_of": [
+        "wordcloud"
+      ],
+      "notes": "PNG rendering only; lexical JSON remains available without it."
+    },
+    "porter_stemming": {
+      "any_of": [
+        "nltk"
+      ],
+      "notes": "Stemming mode only; ordinary lexical profiling remains available without it."
+    }
+  }
+}

@@ -1,0 +1,509 @@
+{
+  "schema": "advanced-lyricism.domain-registry.v2",
+  "rule": "SKILL composition graph -> layered domain bundle -> paired references/templates -> preflighted multi-tool chain -> integrated audition -> revision feedback to every owning layer",
+  "composition": {
+    "matrix": "assets/composition-matrix.md",
+    "layers": [
+      {
+        "id": "context-pressure",
+        "domains": [
+          "context-research",
+          "concept-architecture",
+          "voice-register"
+        ],
+        "artifact": "grounded brief, speaker model, contradiction, stakes and exclusions",
+        "feeds": [
+          "event-meaning",
+          "music-form"
+        ]
+      },
+      {
+        "id": "event-meaning",
+        "domains": [
+          "narrative-scene",
+          "lexical-engineering",
+          "rhetoric-impact",
+          "creative-operations"
+        ],
+        "artifact": "causal scene spine, semantic fields, image system, turns and controlled variants",
+        "feeds": [
+          "sound-time",
+          "music-form"
+        ]
+      },
+      {
+        "id": "sound-time",
+        "domains": [
+          "rhyme-phonology",
+          "prosody-flow",
+          "performance-delivery"
+        ],
+        "artifact": "heard rhyme network, stress grid, cadence arc and performance map",
+        "feeds": [
+          "music-form",
+          "evaluation-feedback"
+        ]
+      },
+      {
+        "id": "music-form",
+        "domains": [
+          "musical-representation",
+          "genre-beat-fit",
+          "hook-song-form"
+        ],
+        "artifact": "beat affordances, section boundaries, contrast and return logic",
+        "feeds": [
+          "sound-time",
+          "evaluation-feedback"
+        ]
+      },
+      {
+        "id": "evaluation-feedback",
+        "domains": [
+          "revision-evaluation"
+        ],
+        "artifact": "defect map, comparisons and accepted or rejected changes",
+        "feeds": [
+          "context-pressure",
+          "event-meaning",
+          "sound-time",
+          "music-form"
+        ]
+      },
+      {
+        "id": "runtime-control",
+        "domains": [
+          "runtime-orchestration"
+        ],
+        "artifact": "preflight plans, support gates and execution receipts",
+        "feeds": [
+          "context-pressure",
+          "event-meaning",
+          "sound-time",
+          "music-form",
+          "evaluation-feedback"
+        ]
+      }
+    ],
+    "edges": [
+      {"from": "context-research", "to": "voice-register", "relation": "grounds", "artifact": "current local and social constraints"},
+      {"from": "context-research", "to": "genre-beat-fit", "relation": "updates", "artifact": "current scene and production context"},
+      {"from": "concept-architecture", "to": "narrative-scene", "relation": "drives", "artifact": "pressure, opposition and costly choice"},
+      {"from": "concept-architecture", "to": "rhetoric-impact", "relation": "pressurizes", "artifact": "contradiction and conceptual hinge"},
+      {"from": "voice-register", "to": "lexical-engineering", "relation": "filters", "artifact": "speaker-credible syntax and vocabulary"},
+      {"from": "voice-register", "to": "performance-delivery", "relation": "embodies", "artifact": "social address and emotional distance"},
+      {"from": "narrative-scene", "to": "lexical-engineering", "relation": "demands", "artifact": "scene entities, actions, institutions and residue"},
+      {"from": "narrative-scene", "to": "hook-song-form", "relation": "recontextualizes", "artifact": "listener knowledge at each return"},
+      {"from": "lexical-engineering", "to": "rhetoric-impact", "relation": "supplies", "artifact": "property-accurate semantic fields"},
+      {"from": "lexical-engineering", "to": "rhyme-phonology", "relation": "filters", "artifact": "meaningful candidates for heard sound matching"},
+      {"from": "rhetoric-impact", "to": "rhyme-phonology", "relation": "locks", "artifact": "semantic pivot and landing requirement"},
+      {"from": "rhyme-phonology", "to": "prosody-flow", "relation": "constrains", "artifact": "stress, vowel and phrase anchors"},
+      {"from": "prosody-flow", "to": "performance-delivery", "relation": "realizes", "artifact": "cadence, entry, suspension and density plan"},
+      {"from": "musical-representation", "to": "genre-beat-fit", "relation": "corrects", "artifact": "actual beat observations against genre priors"},
+      {"from": "musical-representation", "to": "prosody-flow", "relation": "anchors", "artifact": "drum, bass, section and negative-space observations"},
+      {"from": "genre-beat-fit", "to": "hook-song-form", "relation": "conditions", "artifact": "participation, density and return conventions"},
+      {"from": "hook-song-form", "to": "performance-delivery", "relation": "stages", "artifact": "return contrast, response slots and production gaps"},
+      {"from": "creative-operations", "to": "concept-architecture", "relation": "generates", "artifact": "controlled conceptual variants"},
+      {"from": "creative-operations", "to": "lexical-engineering", "relation": "generates", "artifact": "controlled lexical and syntactic variants"},
+      {"from": "revision-evaluation", "to": "concept-architecture", "relation": "feeds_back", "artifact": "meaning and pressure defects"},
+      {"from": "revision-evaluation", "to": "rhyme-phonology", "relation": "feeds_back", "artifact": "sound defects"},
+      {"from": "revision-evaluation", "to": "prosody-flow", "relation": "feeds_back", "artifact": "timing and bar-line defects"},
+      {"from": "revision-evaluation", "to": "voice-register", "relation": "feeds_back", "artifact": "voice and register defects"},
+      {"from": "revision-evaluation", "to": "hook-song-form", "relation": "feeds_back", "artifact": "identity, contrast and return defects"}
+    ],
+    "bundles": [
+      {
+        "id": "narrative_drill",
+        "pipeline": "narrative_drill_compound",
+        "when": "A drill-aware lyric needs current context, authentic voice, causal scene movement, dense rhetoric, beat-responsive delivery, and subject matter drawn from the supplied concept and speaker.",
+        "stages": [
+          ["context-research", "genre-beat-fit", "voice-register", "concept-architecture"],
+          ["narrative-scene", "lexical-engineering", "rhetoric-impact", "creative-operations"],
+          ["musical-representation", "rhyme-phonology", "prosody-flow", "performance-delivery", "hook-song-form"],
+          ["revision-evaluation", "runtime-orchestration"]
+        ]
+      },
+      {
+        "id": "beat_locked_verse",
+        "pipeline": "beat_locked_compound",
+        "when": "Supplied audio, MIDI or beat data should constrain lexical, rhyme, cadence and performance choices throughout the verse.",
+        "stages": [
+          ["musical-representation", "genre-beat-fit", "voice-register"],
+          ["concept-architecture", "lexical-engineering", "rhetoric-impact"],
+          ["rhyme-phonology", "prosody-flow", "performance-delivery"],
+          ["hook-song-form", "revision-evaluation", "runtime-orchestration"]
+        ]
+      },
+      {
+        "id": "hook_system",
+        "pipeline": "hook_compound",
+        "when": "A hook must compound concept identity, voice, lexical memory, return meaning, beat contrast and performability.",
+        "stages": [
+          ["context-research", "concept-architecture", "voice-register", "creative-operations"],
+          ["narrative-scene", "lexical-engineering", "rhetoric-impact"],
+          ["musical-representation", "genre-beat-fit", "hook-song-form"],
+          ["rhyme-phonology", "prosody-flow", "performance-delivery"],
+          ["revision-evaluation", "runtime-orchestration"]
+        ]
+      },
+      {
+        "id": "revision_feedback",
+        "pipeline": "revision_compound",
+        "when": "A real draft needs a full baseline, every relevant detector, and backward routing to all domains that own the defects.",
+        "stages": [
+          ["revision-evaluation", "runtime-orchestration"],
+          ["concept-architecture", "narrative-scene", "voice-register", "lexical-engineering", "rhetoric-impact"],
+          ["musical-representation", "genre-beat-fit", "hook-song-form"],
+          ["rhyme-phonology", "prosody-flow", "performance-delivery", "creative-operations"],
+          ["revision-evaluation"]
+        ]
+      }
+    ]
+  },
+  "domains": [
+    {
+      "id": "concept-architecture",
+      "reference": "references/concept-architecture.md",
+      "template": "assets/templates/concept-architecture.md",
+      "purpose": "Build pressure, contradiction, causality, scale, feedback, perspective and controlled conceptual search before line-level ornament.",
+      "primary_tools": [
+        "idea_lab",
+        "arc_generator",
+        "word_rearranger"
+      ],
+      "secondary_tools": [
+        "technique_opportunity"
+      ],
+      "cross_links": [
+        "references/narrative-scene.md",
+        "references/rhetoric-impact.md",
+        "references/voice-register.md",
+        "references/creative-operations.md",
+        "references/revision-evaluation.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "lexical-engineering",
+      "reference": "references/lexical-engineering.md",
+      "template": "assets/templates/lexical-engineering.md",
+      "purpose": "Construct word fields that survive meaning, sound, register, meter, scene and performance simultaneously.",
+      "primary_tools": [
+        "lexical_cloud",
+        "semantic_field_map",
+        "rhyme_suggester",
+        "phoneme_map"
+      ],
+      "secondary_tools": [
+        "word_rearranger"
+      ],
+      "cross_links": [
+        "references/rhyme-phonology.md",
+        "references/voice-register.md",
+        "references/context-research.md",
+        "references/rhetoric-impact.md",
+        "references/revision-evaluation.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "rhyme-phonology",
+      "reference": "references/rhyme-phonology.md",
+      "template": "assets/templates/rhyme-phonology.md",
+      "purpose": "Model rhyme as heard structure across stress, vowel/rime, phrase shape, syllable structure, accent, timing and delivery, with spelling treated as a secondary clue.",
+      "primary_tools": [
+        "phoneme_map",
+        "rhyme_suggester",
+        "rhyme_grid",
+        "articulation_audit"
+      ],
+      "secondary_tools": [
+        "prosody_map"
+      ],
+      "cross_links": [
+        "references/lexical-engineering.md",
+        "references/prosody-flow.md",
+        "references/performance-delivery.md",
+        "references/voice-register.md",
+        "references/revision-evaluation.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "prosody-flow",
+      "reference": "references/prosody-flow.md",
+      "template": "assets/templates/prosody-flow.md",
+      "purpose": "Design the relation among lexical stress, performed accent, syntax, beat location, density, breath, rhyme placement and timing.",
+      "primary_tools": [
+        "prosody_map",
+        "cadence_lab",
+        "technique_opportunity"
+      ],
+      "secondary_tools": [
+        "beat_affordance",
+        "articulation_audit"
+      ],
+      "cross_links": [
+        "references/musical-representation.md",
+        "references/performance-delivery.md",
+        "references/rhyme-phonology.md",
+        "references/hook-song-form.md",
+        "references/revision-evaluation.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "musical-representation",
+      "reference": "references/musical-representation.md",
+      "template": "assets/templates/musical-representation.md",
+      "purpose": "Translate MIDI, audio and beat profiles into musical coordinates while preserving raw timing and uncertainty.",
+      "primary_tools": [
+        "midi_to_json",
+        "audio_to_json",
+        "wav_energy_probe",
+        "music_structure",
+        "beat_affordance",
+        "beat_profile_summary",
+        "beat_metadata_reconcile"
+      ],
+      "secondary_tools": [
+        "cadence_lab"
+      ],
+      "cross_links": [
+        "references/prosody-flow.md",
+        "references/performance-delivery.md",
+        "references/hook-song-form.md",
+        "references/genre-beat-fit.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "performance-delivery",
+      "reference": "references/performance-delivery.md",
+      "template": "assets/templates/performance-delivery.md",
+      "purpose": "Treat breath, emphasis, entry, pocket, consonant attack, vowel duration, silence, pitch and texture as compositional variables.",
+      "primary_tools": [
+        "delivery_notation",
+        "articulation_audit",
+        "prosody_map"
+      ],
+      "secondary_tools": [
+        "beat_affordance"
+      ],
+      "cross_links": [
+        "references/prosody-flow.md",
+        "references/musical-representation.md",
+        "references/voice-register.md",
+        "references/rhyme-phonology.md",
+        "references/revision-evaluation.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "narrative-scene",
+      "reference": "references/narrative-scene.md",
+      "template": "assets/templates/narrative-scene.md",
+      "purpose": "Build event, viewpoint, image sequence, agency, reveal order, causal movement and lasting consequence.",
+      "primary_tools": [
+        "arc_generator",
+        "technique_opportunity"
+      ],
+      "secondary_tools": [
+        "word_rearranger"
+      ],
+      "cross_links": [
+        "references/concept-architecture.md",
+        "references/voice-register.md",
+        "references/rhetoric-impact.md",
+        "references/hook-song-form.md",
+        "references/revision-evaluation.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "rhetoric-impact",
+      "reference": "references/rhetoric-impact.md",
+      "template": "assets/templates/rhetoric-impact.md",
+      "purpose": "Use entendre, collision, inversion, understatement, property-locked metaphor, callbacks and delayed resolution to change interpretation or increase pressure.",
+      "primary_tools": [
+        "idea_lab",
+        "technique_opportunity",
+        "word_rearranger"
+      ],
+      "secondary_tools": [
+        "rhyme_suggester"
+      ],
+      "cross_links": [
+        "references/concept-architecture.md",
+        "references/lexical-engineering.md",
+        "references/narrative-scene.md",
+        "references/rhyme-phonology.md",
+        "references/revision-evaluation.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "voice-register",
+      "reference": "references/voice-register.md",
+      "template": "assets/templates/voice-register.md",
+      "purpose": "Preserve a stable relation among viewpoint, syntax, pronunciation, social address, emotional distance, humour, local register and what the speaker withholds.",
+      "primary_tools": [
+        "lexical_cloud",
+        "phoneme_map",
+        "word_rearranger"
+      ],
+      "secondary_tools": [
+        "delivery_notation"
+      ],
+      "cross_links": [
+        "references/context-research.md",
+        "references/performance-delivery.md",
+        "references/lexical-engineering.md",
+        "references/narrative-scene.md",
+        "references/revision-evaluation.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "hook-song-form",
+      "reference": "references/hook-song-form.md",
+      "template": "assets/templates/hook-song-form.md",
+      "purpose": "Design recurrence, contrast, listener memory, return variation and section-level information movement.",
+      "primary_tools": [
+        "arc_generator",
+        "cadence_lab",
+        "music_structure"
+      ],
+      "secondary_tools": [
+        "lexical_cloud"
+      ],
+      "cross_links": [
+        "references/prosody-flow.md",
+        "references/musical-representation.md",
+        "references/concept-architecture.md",
+        "references/narrative-scene.md",
+        "references/performance-delivery.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "genre-beat-fit",
+      "reference": "references/genre-beat-fit.md",
+      "template": "assets/templates/genre-beat-fit.md",
+      "purpose": "Connect genre priors to the actual beat, supplied material and intended performance.",
+      "primary_tools": [
+        "beat_profile_summary",
+        "music_structure",
+        "cadence_lab",
+        "audio_to_json",
+        "wav_energy_probe",
+        "beat_metadata_reconcile"
+      ],
+      "secondary_tools": [
+        "beat_affordance"
+      ],
+      "cross_links": [
+        "references/musical-representation.md",
+        "references/prosody-flow.md",
+        "references/performance-delivery.md",
+        "references/voice-register.md",
+        "references/context-research.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "revision-evaluation",
+      "reference": "references/revision-evaluation.md",
+      "template": "assets/templates/revision-evaluation.md",
+      "purpose": "Diagnose every relevant weakness and opportunity, identify their interactions and priorities, apply a coordinated high-leverage revision set, and route findings to all owning domains.",
+      "primary_tools": [
+        "craft_audit",
+        "workbench",
+        "articulation_audit",
+        "rhyme_grid",
+        "technique_opportunity",
+        "lexical_cloud",
+        "semantic_field_map",
+        "preference_profile"
+      ],
+      "secondary_tools": [
+        "prosody_map",
+        "delivery_notation"
+      ],
+      "cross_links": [
+        "references/concept-architecture.md",
+        "references/rhyme-phonology.md",
+        "references/prosody-flow.md",
+        "references/voice-register.md",
+        "references/performance-delivery.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "context-research",
+      "reference": "references/context-research.md",
+      "template": "assets/templates/context-research.md",
+      "purpose": "Supply current artist, scene, production, language and platform context for freshness-dependent lyric decisions.",
+      "primary_tools": [
+        "context_query_plan",
+        "scene_graph"
+      ],
+      "secondary_tools": [
+        "lexical_cloud",
+        "preference_profile"
+      ],
+      "cross_links": [
+        "references/voice-register.md",
+        "references/genre-beat-fit.md",
+        "references/lexical-engineering.md",
+        "references/concept-architecture.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "creative-operations",
+      "reference": "references/creative-operations.md",
+      "template": "assets/templates/creative-operations.md",
+      "purpose": "Choose representation, detection, generation, transformation and evaluation tools by the concrete craft question; keep generation and selection separate.",
+      "primary_tools": [
+        "idea_lab",
+        "word_rearranger",
+        "arc_generator",
+        "cadence_lab"
+      ],
+      "secondary_tools": [
+        "rhyme_suggester",
+        "lexical_cloud",
+        "semantic_field_map",
+        "preference_profile",
+        "workbench"
+      ],
+      "cross_links": [
+        "references/concept-architecture.md",
+        "references/revision-evaluation.md",
+        "references/rhetoric-impact.md",
+        "references/prosody-flow.md",
+        "references/runtime-orchestration.md"
+      ]
+    },
+    {
+      "id": "runtime-orchestration",
+      "reference": "references/runtime-orchestration.md",
+      "template": "assets/templates/runtime-orchestration.md",
+      "purpose": "Plan, preflight, execute, recover, and hand off Skill-local tools with explicit dependency states, output contracts and supported interpretations.",
+      "primary_tools": [
+        "tool_router",
+        "dependency_check"
+      ],
+      "secondary_tools": [],
+      "cross_links": [
+        "references/revision-evaluation.md",
+        "references/rhyme-phonology.md",
+        "references/prosody-flow.md",
+        "references/musical-representation.md",
+        "references/performance-delivery.md",
+        "references/creative-operations.md"
+      ]
+    }
+  ]
+}

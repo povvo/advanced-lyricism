@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scene Graph",
+  "type": "object",
+  "required": ["schema", "summary", "nodes", "edges", "focus", "warnings", "limits"],
+  "properties": {
+    "schema": {"const": "advanced-lyricism.scene-graph.v1"},
+    "summary": {"type": "object"},
+    "nodes": {"type": "array"},
+    "edges": {"type": "array"},
+    "focus": {"type": "object"},
+    "connection": {"type": ["object", "null"]},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "limits": {"type": "array", "items": {"type": "string"}}
+  }
+}

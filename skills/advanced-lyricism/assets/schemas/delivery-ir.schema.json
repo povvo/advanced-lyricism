@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Advanced Lyricism Delivery IR",
+  "type": "object",
+  "required": [
+    "schema",
+    "summary",
+    "lines",
+    "legend",
+    "limits"
+  ],
+  "properties": {
+    "schema": {
+      "const": "advanced-lyricism.delivery-ir.v1"
+    },
+    "summary": {
+      "type": "object"
+    },
+    "lines": {
+      "type": "array"
+    },
+    "legend": {
+      "type": "object"
+    },
+    "limits": {
+      "type": "array"
+    }
+  }
+}

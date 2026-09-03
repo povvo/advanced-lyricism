@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Context Query Plan",
+  "type": "object",
+  "required": ["schema", "phrase", "scope", "recognized_terms", "queries", "execution", "limits"],
+  "properties": {
+    "schema": {"const": "advanced-lyricism.context-query-plan.v1"},
+    "phrase": {"type": "string"},
+    "scope": {"type": "object"},
+    "recognized_terms": {"type": "array"},
+    "queries": {"type": "array"},
+    "execution": {"type": "string"},
+    "limits": {"type": "array", "items": {"type": "string"}}
+  }
+}

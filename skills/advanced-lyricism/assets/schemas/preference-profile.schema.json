@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Preference Profile",
+  "type": "object",
+  "required": ["schema", "summary", "feature_associations", "cluster_associations", "skipped", "limits"],
+  "properties": {
+    "schema": {"const": "advanced-lyricism.preference-profile.v1"},
+    "summary": {"type": "object"},
+    "feature_associations": {"type": "array"},
+    "cluster_associations": {"type": "array"},
+    "accepted_reasons": {"type": "array"},
+    "rejected_reasons": {"type": "array"},
+    "skipped": {"type": "array"},
+    "limits": {"type": "array", "items": {"type": "string"}}
+  }
+}

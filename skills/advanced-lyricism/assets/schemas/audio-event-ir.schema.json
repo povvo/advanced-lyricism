@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Advanced Lyricism Audio Event IR",
+  "type": "object",
+  "required": [
+    "schema",
+    "source",
+    "timing",
+    "beat_features",
+    "summary",
+    "representation"
+  ],
+  "properties": {
+    "schema": {
+      "const": "advanced-lyricism.audio-event-ir.v1"
+    },
+    "source": {
+      "type": "object"
+    },
+    "timing": {
+      "type": "object"
+    },
+    "beat_features": {
+      "type": "array"
+    },
+    "summary": {
+      "type": "object"
+    },
+    "representation": {
+      "type": "object"
+    }
+  }
+}
