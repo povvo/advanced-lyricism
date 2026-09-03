@@ -1,10 +1,10 @@
 # Advanced Lyricism
 
-Advanced Lyricism is a research-grounded Agent Skill for writing, rewriting, diagnosing, beat-mapping, and performing advanced rap and song lyrics. It connects meaning, voice, narrative, language, rhyme, prosody, music, genre, delivery, hooks, and revision through a directed composition graph, so the domains pass actual working artifacts to one another instead of attending the same meeting and calling it integration.
+Advanced Lyricism is a skill for agents that enables much better writing, rewriting, diagnosing, beat-mapping, and performing of advanced rap and song lyrics. It connects meaning, voice, narrative, language, rhyme, prosody, music, genre, delivery, hooks, and revision through a directed composition graph, so the domains pass actual working artifacts to one another. Overall it's a passion project of mine with a lot of research as well as personal knowledge/experience from time with friends and artists. 
 
 [![Validate skills](https://github.com/povvo/advanced-lyricism/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/povvo/advanced-lyricism/actions/workflows/validate-skills.yml)
 
-> Release state: locally assembled and validated for the proposed public source `povvo/advanced-lyricism`. The GitHub repository has not been created yet, remote installation has not been tested, and skills.sh indexing is therefore pending.
+> Release state: validated for the private GitHub source `povvo/advanced-lyricism`. Installation requires an authenticated GitHub account with access to the repository, and private repositories are not listed on skills.sh.
 
 ## What it does
 
@@ -37,7 +37,7 @@ For a non-interactive Codex installation using copied files:
 npx skills add povvo/advanced-lyricism --skill advanced-lyricism --agent codex --copy --yes
 ```
 
-These GitHub-backed commands become usable after the repository is published. There is no separate npm publication step; `npx skills` installs from the repository.
+These GitHub-backed commands require authentication with access to the private repository. There is no separate npm publication step; `npx skills` installs from the repository.
 
 ## Use
 
@@ -152,7 +152,7 @@ DISABLE_TELEMETRY=1 npx --yes skills@latest add . --list
 
 The included GitHub Actions workflow repeats structural validation, current-CLI discovery, and an isolated copied install on pushes to `main`, pull requests, manual dispatches, and a weekly compatibility schedule. A passing local run does not predict GitHub Actions by telepathy; the remote workflow remains a release gate after publication.
 
-skills.sh indexing is asynchronous. A working GitHub install may exist before a catalog page appears, so a missing page means “indexing pending,” not “the files have entered folklore.”
+Private repositories are not eligible for ordinary skills.sh discovery. The GitHub-backed install remains available to authenticated users with repository access; the leaderboard will cope with the administrative silence.
 
 ## License
 
