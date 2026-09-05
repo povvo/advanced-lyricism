@@ -381,7 +381,7 @@ No project-level SPDX licence has been selected for the original Advanced Lyrici
 
 ## Security
 
-Report vulnerabilities privately to [povvo.dev@gmail.com](mailto:povvo.dev@gmail.com); do not use public issues, pull requests, or discussions for sensitive details. See [SECURITY.md](SECURITY.md) for reporting details and the evidence needed to reproduce a concern.
+Report vulnerabilities privately to [povvo.dev@gmail.com](mailto:povvo.dev@gmail.com); do not use public issues, pull requests, or discussions for sensitive details. See [SECURITY.md](SECURITY.md) for repository reporting details and the [account security policy](https://github.com/povvo/.github/blob/main/SECURITY.md) for response timing and account-wide handling.
 
 ## Support
 
