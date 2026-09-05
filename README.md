@@ -56,19 +56,15 @@ Local timing sample (not a throughput benchmark): `tool_router.py --pipeline lyr
 
 ## Install
 
-**Requirements:** Node.js 22 was the CI-tested runtime for the `skills` CLI; Python 3.12.10 was the local validation runtime. The repository does not declare a lower version floor yet. Git is required only for the reproducible source checkout below. The documented commands are intended for Windows, macOS, or Linux environments with Node.js, Python, and a shell that can run the shown commands; CI currently runs on Ubuntu.
+**Requirements:** Node.js 22 was the CI-tested runtime for the `skills` CLI; Python 3.12.10 was the local validation runtime. The repository does not declare a lower version floor yet. Git is required for the repository checkout below. The documented commands are intended for Windows, macOS, or Linux environments with Node.js, Python, and a shell that can run the shown commands; CI currently runs on Ubuntu.
 
-The primary install path is the public repository source:
-
-```bash
-npx skills add povvo/advanced-lyricism --list
-npx skills add povvo/advanced-lyricism --skill advanced-lyricism
-```
-
-Verify discovery before using the skill:
+Install from a current repository checkout. Use your normal GitHub credentials if the repository is access-controlled:
 
 ```bash
-npx skills add povvo/advanced-lyricism --list
+git clone https://github.com/povvo/advanced-lyricism.git
+cd advanced-lyricism
+npx skills add . --list
+npx skills add . --skill advanced-lyricism --agent codex --copy --yes
 ```
 
 Expected discovery includes:
@@ -77,19 +73,18 @@ Expected discovery includes:
 advanced-lyricism
 ```
 
-The repository has no published package or release version, so the public `npx skills` source command is currently unversioned. For a reproducible source state, pin the checkout to the reviewed commit before installing locally:
+For a reproducible source state, optionally pin that checkout to a reviewed commit before installing locally:
 
 ```bash
-git clone https://github.com/povvo/advanced-lyricism.git
-cd advanced-lyricism
-git checkout f3160f3
+git fetch --prune origin
+git checkout <reviewed-commit>
 npx skills add . --skill advanced-lyricism --agent codex --copy --yes
 ```
 
 Audio feature conversion is optional and currently conditional on the `audio_analysis` capability. Text and MIDI routes use the bundled assets; PCM WAV coarse energy has a dependency-free fallback. No system compiler is required by the documented text-first path. See the [dependency manifest](skills/advanced-lyricism/assets/dependency-manifest.json).
 ## Quickstart
 
-Run this source-driven, text-first route first. Four commands create a small input, check capabilities, select the general composition route, and run the bundled pronunciation map.
+From the repository checkout (the directory that contains `skills/`), run this source-driven, text-first route first. Four commands create a small input, check capabilities, select the general composition route, and run the bundled pronunciation map.
 
 ### First route
 
@@ -386,7 +381,7 @@ No project-level SPDX licence has been selected for the original Advanced Lyrici
 
 ## Security
 
-Report vulnerabilities privately to [povvo.dev@gmail.com](mailto:povvo.dev@gmail.com); do not use public issues, pull requests, or discussions for sensitive details. See [SECURITY.md](SECURITY.md). Expect an initial response within 72 hours.
+Report vulnerabilities privately to [povvo.dev@gmail.com](mailto:povvo.dev@gmail.com); do not use public issues, pull requests, or discussions for sensitive details. See [SECURITY.md](SECURITY.md) for reporting details and the evidence needed to reproduce a concern.
 
 ## Support
 
