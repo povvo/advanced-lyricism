@@ -1,12 +1,9 @@
-# Advanced Lyricism — source-driven lyric craft and music mapping
+# Advanced Lyricism
 
-Use Advanced Lyricism for source-driven lyric writing, rewriting, beat mapping, and revision when a task needs explicit text, MIDI, or audio representations. It is a Python-backed agent skill that carries artifacts through a 15-domain composition graph and six layers. Unavailable measurements stay `null` or unknown; the route preserves the writer's subject, voice, pronunciation, register, emotional logic, supplied material, and hard constraints.
+Agentic Eminem pretty much. Lyric writing, rewriting, beat mapping, and revision when a task needs explicit text, MIDI, or audio representations. It is a Python-backed agent skill that carries artifacts through a 15-domain composition graph and six layers. Unavailable measurements stay `null` or unknown; the route preserves the writer's subject, voice, pronunciation, register, emotional logic, supplied material, and hard constraints.
 
 [![domains](https://img.shields.io/badge/domains-15-111827?style=for-the-badge)](skills/advanced-lyricism/assets/domain-registry.json) [![pipelines](https://img.shields.io/badge/pipelines-10-0f766e?style=for-the-badge)](skills/advanced-lyricism/SKILL.md) [![tools](https://img.shields.io/badge/tools-27-7c3aed?style=for-the-badge)](skills/advanced-lyricism/assets/tool-catalog.json) [![runtime-Python](https://img.shields.io/badge/runtime-Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](skills/advanced-lyricism/scripts/)
 
-## Reader outcome
-
-After reading this page, you should be able to install the skill, choose a route from the work you actually need to do, preflight the available tools, pass text/MIDI/audio/beat artifacts through the correct representations, interpret missing measurements as unavailable, and verify the resulting files with the repository validators. For a worked operating procedure, see [the user guide](docs/user-guide.md). For additions and maintenance, see [the contributor guide](docs/contributor-guide.md).
 
 ## Contents
 
